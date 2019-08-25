@@ -1,39 +1,31 @@
 package com.arenko.tvshowguide.ui.movie
 
-import android.util.Log
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.arenko.tvshowguide.data.ResultResponse
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
+import com.arenko.tvshowguide.data.Movie
 import com.arenko.tvshowguide.network.MovieRepository
-import io.reactivex.android.schedulers.AndroidSchedulers
+import com.arenko.tvshowguide.ui.movie.datasource.MovieDataSourceFactory
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.observers.DisposableSingleObserver
-import io.reactivex.schedulers.Schedulers
 
 class MovieListViewModel(private val movieRepository: MovieRepository) : ViewModel() {
     private val disposable = CompositeDisposable()
-    val movieList = MutableLiveData<ResultResponse>()
+    lateinit var movieList: LiveData<PagedList<Movie>>
+    private lateinit var movieDataSourceFactory: MovieDataSourceFactory
 
-    fun tvShowResponse(): MutableLiveData<ResultResponse> {
-        return movieList
+    fun initializePaging() {
+        movieDataSourceFactory = MovieDataSourceFactory(movieRepository, disposable)
+        val config = PagedList.Config.Builder()
+            .setPageSize(20)
+            .setEnablePlaceholders(false)
+            .build()
+        movieList =
+            LivePagedListBuilder<Int, Movie>(movieDataSourceFactory, config).build()
     }
 
-    fun getTvShows(page: Int) {
-        disposable.add(
-            movieRepository.getPopularTvShows(page).subscribeOn(
-                Schedulers.io()
-            )
-                .observeOn(AndroidSchedulers.mainThread()).subscribeWith(object :
-                    DisposableSingleObserver<ResultResponse>() {
-                    override fun onSuccess(value: ResultResponse) {
-                        movieList.value = value;
-                    }
-
-                    override fun onError(e: Throwable) {
-                        Log.w("", "error");
-                    }
-                })
-        )
+    fun retry() {
+        movieDataSourceFactory.sourceLiveData.value?.retry()
     }
 
     override fun onCleared() {

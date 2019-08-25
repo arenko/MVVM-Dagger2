@@ -6,21 +6,21 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.arenko.tvshowguide.MovieApplication
 import com.arenko.tvshowguide.R
 import com.arenko.tvshowguide.base.BaseFragment
-import com.arenko.tvshowguide.data.Movie
-import com.arenko.tvshowguide.data.ResultResponse
 import com.arenko.tvshowguide.utils.ViewModelFactory
 import kotlinx.android.synthetic.main.movie_list_fragment.*
 import javax.inject.Inject
+
 
 class MovieListFragment : BaseFragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     lateinit var viewModelMovie: MovieListViewModel
+    private lateinit var movieAdapter: MovieAdapter
 
     companion object {
         fun newInstance() = MovieListFragment()
@@ -31,9 +31,6 @@ class MovieListFragment : BaseFragment() {
         (activity!!.application as MovieApplication).appComponent.doInjection(this)
         viewModelMovie =
             ViewModelProviders.of(this, viewModelFactory).get(MovieListViewModel::class.java)
-        viewModelMovie.tvShowResponse().observe(
-            this,
-            Observer<ResultResponse> { this.consumeResponse(it) })
     }
 
     override fun onCreateView(
@@ -44,32 +41,24 @@ class MovieListFragment : BaseFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setupRecyclerView()
-        viewModelMovie.getTvShows(1);
+        viewModelMovie.initializePaging()
+        initAdapter()
     }
 
-    private fun consumeResponse(response: ResultResponse) {
-        if (response.results!!.size > 0) {
-            setRecyclerViewAdapter(response.results!!)
+    private fun initAdapter() {
+        movieAdapter = MovieAdapter()
+        rv_movie_list.layoutManager = LinearLayoutManager(baseContext, RecyclerView.VERTICAL, false)
+        rv_movie_list.adapter = movieAdapter
+        viewModelMovie.movieList.observe(this, Observer {
+            movieAdapter.submitList(it)
+        })
+        swipe_refresh_layout.setOnRefreshListener {
+            refreshItems()
         }
     }
 
-    private fun setRecyclerViewAdapter(movie: List<Movie>) {
-        val adapter = MovieAdapter(movie)
-        rv_movie_list.adapter = adapter
+    fun refreshItems() {
+        initAdapter()
+        swipe_refresh_layout.isRefreshing = false
     }
-
-
-    private fun setupRecyclerView() {
-        rv_movie_list.setHasFixedSize(true)
-        val linearLayoutManager = LinearLayoutManager(baseContext)
-        rv_movie_list.layoutManager = linearLayoutManager
-        rv_movie_list.addItemDecoration(
-            DividerItemDecoration(
-                baseContext,
-                DividerItemDecoration.VERTICAL
-            )
-        )
-    }
-
 }

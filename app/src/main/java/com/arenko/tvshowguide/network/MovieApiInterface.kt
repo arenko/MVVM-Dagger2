@@ -1,6 +1,6 @@
 package com.arenko.tvshowguide.network
 
-import com.arenko.tvshowguide.data.ResultResponse
+import com.arenko.tvshowguide.data.Movie
 
 import io.reactivex.Single
 import retrofit2.http.GET
@@ -13,6 +13,6 @@ interface MovieApiInterface {
         @Query("api_key") api_key: String,
         @Query("language") language: String,
         @Query("page") page: Int
-    ): Single<ResultResponse>
+    ): Single<Movie>
 
 }
