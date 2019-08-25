@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.arenko.tvshowguide.MovieApplication
 import com.arenko.tvshowguide.R
@@ -63,6 +64,12 @@ class MovieListFragment : BaseFragment() {
         rv_movie_list.setHasFixedSize(true)
         val linearLayoutManager = LinearLayoutManager(baseContext)
         rv_movie_list.layoutManager = linearLayoutManager
+        rv_movie_list.addItemDecoration(
+            DividerItemDecoration(
+                baseContext,
+                DividerItemDecoration.VERTICAL
+            )
+        )
     }
 
 }

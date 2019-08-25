@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.arenko.tvshowguide.R
 import com.arenko.tvshowguide.data.Movie
+import com.arenko.tvshowguide.utils.Constants
 import com.squareup.picasso.Picasso
 
 class MovieAdapter(internal var listMovie: List<Movie>) :
@@ -21,7 +22,7 @@ class MovieAdapter(internal var listMovie: List<Movie>) :
 
     override fun onBindViewHolder(movieViewHolder: MovieViewHolder, i: Int) {
         var movie = this.listMovie[i];
-        Picasso.get().load("http://image.tmdb.org/t/p/w185" + movie.poster_path)
+        Picasso.get().load(Constants.imagePath + movie.poster_path)
             .into(movieViewHolder.iv_movie)
         movieViewHolder.tv_movie_title.setText(movie.name);
         movieViewHolder.tv_movie_date.setText(movie.first_air_date);
