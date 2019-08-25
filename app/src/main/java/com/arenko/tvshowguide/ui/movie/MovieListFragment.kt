@@ -12,6 +12,7 @@ import com.arenko.tvshowguide.MovieApplication
 import com.arenko.tvshowguide.R
 import com.arenko.tvshowguide.base.BaseFragment
 import com.arenko.tvshowguide.utils.ViewModelFactory
+import kotlinx.android.synthetic.main.layout_progress_spinner.*
 import kotlinx.android.synthetic.main.movie_list_fragment.*
 import javax.inject.Inject
 
@@ -50,6 +51,7 @@ class MovieListFragment : BaseFragment() {
         rv_movie_list.layoutManager = LinearLayoutManager(baseContext, RecyclerView.VERTICAL, false)
         rv_movie_list.adapter = movieAdapter
         viewModelMovie.movieList.observe(this, Observer {
+            anim_loading.visibility = View.GONE;
             movieAdapter.submitList(it)
         })
         swipe_refresh_layout.setOnRefreshListener {
