@@ -24,10 +24,6 @@ class MovieListViewModel(private val movieRepository: MovieRepository) : ViewMod
             LivePagedListBuilder<Int, Movie>(movieDataSourceFactory, config).build()
     }
 
-    fun retry() {
-        movieDataSourceFactory.sourceLiveData.value?.retry()
-    }
-
     override fun onCleared() {
         super.onCleared()
         disposable.clear()
