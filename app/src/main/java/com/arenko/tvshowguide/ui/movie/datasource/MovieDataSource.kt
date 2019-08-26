@@ -2,7 +2,8 @@ package com.arenko.tvshowguide.ui.movie.datasource
 
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PageKeyedDataSource
-import com.arenko.tvshowguide.data.Movie
+import com.arenko.tvshowguide.model.Movie
+import com.arenko.tvshowguide.model.State
 import com.arenko.tvshowguide.network.MovieRepository
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -16,19 +17,22 @@ class MovieDataSource(
 ) : PageKeyedDataSource<Int, Movie>() {
 
     private var retryCompletable: Completable? = null
-
+    var state: MutableLiveData<State> = MutableLiveData()
 
     override fun loadInitial(
         params: LoadInitialParams<Int>,
         callback: LoadInitialCallback<Int, Movie>
     ) {
+        updateState(State.LOADING)
         compositeDisposable.add(
             movieRepository.getPopularTvShows(1)
                 .subscribe(
                     { response ->
+                        updateState(State.DONE)
                         callback.onResult(response.results!!.toMutableList(), null, 2)
                     },
                     {
+                        updateState(State.ERROR)
                         setRetry(Action { loadInitial(params, callback) })
                     }
                 )
@@ -36,13 +40,16 @@ class MovieDataSource(
     }
 
     override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, Movie>) {
+        updateState(State.LOADING)
         compositeDisposable.add(
             movieRepository.getPopularTvShows(params.key)
                 .subscribe(
                     { response ->
+                        updateState(State.DONE)
                         callback.onResult(response.results!!.toMutableList(), params.key + 1)
                     },
                     {
+                        updateState(State.ERROR)
                         setRetry(Action { loadAfter(params, callback) })
                     }
                 )
@@ -52,7 +59,12 @@ class MovieDataSource(
     override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, Movie>) {
     }
 
-    //In case we want to use
+
+    private fun updateState(state: State) {
+        this.state.postValue(state)
+    }
+
+    //In case we want to use afte error
     fun retry() {
         if (retryCompletable != null) {
             compositeDisposable.add(

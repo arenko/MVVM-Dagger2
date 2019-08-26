@@ -44,16 +44,20 @@ class MovieListFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModelMovie.initializePaging()
         initAdapter()
+        showResult()
+    }
+
+    private fun showResult() {
+        viewModelMovie.movieList.observe(this, Observer {
+            anim_loading.visibility = View.GONE
+            movieAdapter.submitList(it)
+        })
     }
 
     private fun initAdapter() {
         movieAdapter = MovieAdapter()
         rv_movie_list.layoutManager = LinearLayoutManager(baseContext, RecyclerView.VERTICAL, false)
         rv_movie_list.adapter = movieAdapter
-        viewModelMovie.movieList.observe(this, Observer {
-            anim_loading.visibility = View.GONE;
-            movieAdapter.submitList(it)
-        })
         swipe_refresh_layout.setOnRefreshListener {
             refreshItems()
         }
@@ -61,6 +65,7 @@ class MovieListFragment : BaseFragment() {
 
     fun refreshItems() {
         initAdapter()
+        showResult()
         swipe_refresh_layout.isRefreshing = false
     }
 }

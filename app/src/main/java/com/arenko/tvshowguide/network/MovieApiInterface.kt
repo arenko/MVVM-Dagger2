@@ -1,6 +1,6 @@
 package com.arenko.tvshowguide.network
 
-import com.arenko.tvshowguide.data.Movie
+import com.arenko.tvshowguide.model.Movie
 
 import io.reactivex.Single
 import retrofit2.http.GET

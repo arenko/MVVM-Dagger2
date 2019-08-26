@@ -15,7 +15,7 @@ constructor(private val repository: MovieRepository) :
             return MovieListViewModel(repository) as T
         }
 
-        throw IllegalArgumentException("Unknown name")
+        throw IllegalArgumentException("Unknown´model")
     }
 
 }

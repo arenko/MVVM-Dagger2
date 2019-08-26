@@ -1,4 +1,4 @@
-package com.arenko.tvshowguide.data
+package com.arenko.tvshowguide.model
 
 import com.google.gson.annotations.Expose
 

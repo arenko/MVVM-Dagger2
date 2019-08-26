@@ -2,7 +2,7 @@ package com.arenko.tvshowguide.ui.movie.datasource
 
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.DataSource
-import com.arenko.tvshowguide.data.Movie
+import com.arenko.tvshowguide.model.Movie
 import com.arenko.tvshowguide.network.MovieRepository
 import io.reactivex.disposables.CompositeDisposable
 

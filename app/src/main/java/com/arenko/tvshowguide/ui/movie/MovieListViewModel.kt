@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import com.arenko.tvshowguide.data.Movie
+import com.arenko.tvshowguide.model.Movie
 import com.arenko.tvshowguide.network.MovieRepository
 import com.arenko.tvshowguide.ui.movie.datasource.MovieDataSourceFactory
 import io.reactivex.disposables.CompositeDisposable
@@ -14,10 +14,14 @@ class MovieListViewModel(private val movieRepository: MovieRepository) : ViewMod
     lateinit var movieList: LiveData<PagedList<Movie>>
     private lateinit var movieDataSourceFactory: MovieDataSourceFactory
 
+    companion object {
+        const val PAGE_SIZE = 20
+    }
+
     fun initializePaging() {
         movieDataSourceFactory = MovieDataSourceFactory(movieRepository, disposable)
         val config = PagedList.Config.Builder()
-            .setPageSize(20)
+            .setPageSize(PAGE_SIZE)
             .setEnablePlaceholders(false)
             .build()
         movieList =

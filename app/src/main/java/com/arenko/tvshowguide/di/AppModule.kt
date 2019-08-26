@@ -14,19 +14,13 @@ import javax.inject.Singleton
 
 @Module
 class AppModule {
-
-    internal var retrofit: Retrofit? = null
-
     @Singleton
     @Provides
     internal fun provideRetrofit(): Retrofit {
-        if (retrofit == null) {
-            retrofit = Retrofit.Builder().baseUrl(Constants.BASE_URL)
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-        }
-        return this.retrofit!!
+        return Retrofit.Builder().baseUrl(Constants.BASE_URL)
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
     }
 
     @Singleton
